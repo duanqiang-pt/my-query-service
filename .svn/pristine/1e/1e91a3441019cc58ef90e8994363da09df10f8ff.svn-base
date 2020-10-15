@@ -1,0 +1,162 @@
+package com.zhongsheng.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+
+import com.google.common.collect.Lists;
+import com.zhongsheng.component.GroupBy;
+import com.zhongsheng.component.SqlQueryCondition;
+import com.zhongsheng.component.enums.OrderByTypeEnum;
+import com.zhongsheng.component.orderby.OrderBy;
+import com.zhongsheng.component.orderby.OrderByDetail;
+import com.zhongsheng.component.where.OrItem;
+import com.zhongsheng.component.where.Where;
+import com.zhongsheng.model.UserDo;
+import com.zhongsheng.result.QueryHandleResult;
+import com.zhongsheng.service.CommonQueryService;
+import com.zhongsheng.utils.RandomUtils;
+
+/**
+ * 关于查询服务的测试类
+ * @author zhongsheng
+ * @date 2020年10月11日
+ * @version 1.0
+ */
+public class UserQueryServiceImplTest {
+	
+	@InjectMocks
+	private CommonQueryService userQueryService = new CommonQueryServiceImpl();
+	
+	
+	private List<UserDo> testDataList = Lists.newArrayList();
+	
+	@Before
+	public void setUp(){
+	    //准备5条数据
+		prepareTestData(10);
+	}
+
+    /**
+     * 
+     */
+    private void prepareTestData(int dataCount) {
+        for(int i=1;i<=dataCount;i++){
+			UserDo userDo = new UserDo();
+			userDo.setId(i);
+		    userDo.setAge(i%2==0?25:27);
+			userDo.setCellphone("13988886"+i);
+			userDo.setName("张三"+RandomUtils.randomInt(20, 30)+"号");
+			testDataList.add(userDo);
+		}
+    }
+	
+	@Test
+	public void testAll(){
+	    
+	}
+	
+	/**
+	 * 对OrderBy条件的测试
+	 */
+	@Test
+	public void testOrderBy(){
+	    
+	    SqlQueryCondition sqlQueryCondition = new SqlQueryCondition();
+	    
+	    OrderBy orderby = new OrderBy();
+	    List<OrderByDetail> orderByDetailList = new ArrayList<>();
+	    
+	    OrderByDetail orderByDetail1 = new OrderByDetail();
+	    orderByDetail1.setFieldName("age");
+	    orderByDetail1.setOrderByType(OrderByTypeEnum.DESC);
+	    
+	    OrderByDetail orderByDetail2 = new OrderByDetail();
+        orderByDetail2.setFieldName("name");
+        orderByDetail2.setOrderByType(OrderByTypeEnum.ASC);
+	    
+	    
+        orderByDetailList.add(orderByDetail1);
+	    orderByDetailList.add(orderByDetail2);
+	    orderby.setOrderByDetailList(orderByDetailList);
+	    
+	    sqlQueryCondition.setOrderByObj(orderby);
+	    
+	    QueryHandleResult<UserDo> result = userQueryService.query(testDataList, sqlQueryCondition);
+        
+        List<UserDo> listResult = result.getListResult();
+        
+        System.out.println(listResult);
+        System.out.println("返回结果的大小是："+listResult.size());
+	    
+	}
+	
+	
+	
+	/**
+	 * 对GroupBy条件的测试
+	 */
+	@Test
+	public void testGroupBy(){
+	    
+	    SqlQueryCondition sqlQueryCondition = new SqlQueryCondition();
+	   
+	    GroupBy groupBy = new GroupBy();
+	    groupBy.setGroupByField("age");
+	    
+	    sqlQueryCondition.setGroupByObj(groupBy);
+	    
+	    //这里先调用一次测试缓存是否生效
+	    userQueryService.query(testDataList, sqlQueryCondition);
+	    QueryHandleResult<UserDo> result = userQueryService.query(testDataList, sqlQueryCondition);
+	    
+	    Map<Object, List<UserDo>> ressultMap = result.getHasGroupByRessultMap();
+        
+	    System.out.println(ressultMap);
+        System.out.println("返回结果的大小是："+ressultMap.size());
+	    
+	}
+	
+
+	/**
+	 * 对Where条件的测试
+	 */
+	@Test
+	public void testWhereCondition() {
+		
+		SqlQueryCondition sqlQueryCondition = new SqlQueryCondition();
+		
+		Where where  = new Where();
+		List<OrItem> orCriteriaList = new ArrayList<>();
+		//添加第一个“or”条件
+		OrItem orItem1 = new OrItem();
+//		orItem.andNotEqualTo("id", 5L);
+//		orItem.andNotEqualTo("name", "张三2");
+		orItem1.andIn("id", Lists.newArrayList(3L,5L,6L));
+		orCriteriaList.add(orItem1);
+		
+		//添加第二个“or”条件
+		OrItem orItem2 = new OrItem();
+		orItem2.andIn("age", Lists.newArrayList(0,5,7));
+		orCriteriaList.add(orItem2);
+		
+		
+		where.setOrCriteriaList(orCriteriaList);
+		sqlQueryCondition.setWhereObj(where);
+		
+		 //这里先调用一次测试缓存是否生效
+		userQueryService.query(testDataList, sqlQueryCondition);
+		QueryHandleResult<UserDo> result = userQueryService.query(testDataList, sqlQueryCondition);
+		
+		List<UserDo> listResult = result.getListResult();
+		
+		System.out.println(listResult);
+		System.out.println("返回结果的大小是："+listResult.size());
+		
+	}
+
+}

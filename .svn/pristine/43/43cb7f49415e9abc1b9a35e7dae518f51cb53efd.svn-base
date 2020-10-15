@@ -1,0 +1,77 @@
+package com.zhongsheng.utils;
+
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+
+import org.apache.commons.collections4.Closure;
+import org.apache.commons.collections4.CollectionUtils;
+
+import com.zhongsheng.exception.QueryParamIllgalException;
+
+
+/**
+ * 基于注解的校验工具类
+ * @author zhongsheng
+ * @date 2019年4月30日
+ * @version 1.0
+ */
+public class ValidateUtil {
+	
+	private final static Validator VALIDATOR=Validation.buildDefaultValidatorFactory().getValidator();
+
+	
+	/**
+     * 业务校验
+     * @param resultCode
+     * @param object
+     */
+	@SuppressWarnings("deprecation")
+    public static void validate(Object object) {
+        if (object == null) {
+            throw new QueryParamIllgalException("校验对象不能为空！");
+        }
+        Set<ConstraintViolation<Object>> constraintViolations = VALIDATOR.validate(object);
+        CollectionUtils.forAllDo(constraintViolations, new Closure<ConstraintViolation<Object>>() {
+        	@Override
+        	public void execute(ConstraintViolation<Object> objectConstraintViolation) {
+        		 String message = objectConstraintViolation.getMessage();
+        		 throw new QueryParamIllgalException(message);
+        	}
+		});
+
+    }
+    
+    /**
+     * 分组校验方法
+     * @param obj  待校验对象
+     * @param groups   校验规则分组
+     */
+    @SuppressWarnings("deprecation")
+	public static void validateWithGroups(Object obj,Class<?>... groups){
+    	 if (obj == null) {
+             throw new QueryParamIllgalException("校验对象不能为空！");
+         }
+    	 Set<ConstraintViolation<Object>> constraintViolations = VALIDATOR.validate(obj,groups);
+    	 CollectionUtils.forAllDo(constraintViolations, new Closure<ConstraintViolation<Object>>() {
+    		 
+    		 @Override
+    		public void execute(ConstraintViolation<Object> input) {
+    			String message = input.getMessage();
+    			throw new QueryParamIllgalException(message);
+    		}
+		});
+    }
+}
+
+
+
+interface FirstGroup{
+	
+}
+
+interface SecondGroup{
+	
+}

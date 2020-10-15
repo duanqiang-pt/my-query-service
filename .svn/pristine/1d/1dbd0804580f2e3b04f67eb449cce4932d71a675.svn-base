@@ -1,0 +1,11 @@
+package com.zhongsheng.strategy.impl;
+
+import com.zhongsheng.strategy.SqlOrderByStrategy;
+
+/**
+ * order by条件默认策略类
+ * @version 1.0
+ */
+public class OrderByDefaultStrategy implements SqlOrderByStrategy {
+
+}

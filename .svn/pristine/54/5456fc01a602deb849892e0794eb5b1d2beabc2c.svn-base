@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--  -->
+<mapper namespace="com.goodneighbours.dao.OwnerDao">
+    <!--<cache eviction="FIFO" flushInterval="3600000" size="512" readOnly="true"/>-->
+
+    <sql id="pager">
+        <if test="pager != null">
+            limit ${pager.pageSize} offset ${pager.offset}
+        </if>
+    </sql>
+
+    <sql id="criteriaQueryWhere">
+        <if test="criterias != null">
+            <where>
+                <foreach collection="criterias" item="criteria" separator="OR">
+                    <if test="criteria.valid">
+                        <trim prefix="(" suffix=")" prefixOverrides="AND">
+                            <foreach collection="criteria.criterions" item="criterion">
+                                <choose>
+                                    <when test="criterion.noValue">
+                                        AND ${criterion.condition}
+                                    </when>
+                                    <when test="criterion.singleValue">
+                                        AND ${criterion.condition} #{criterion.value}
+                                    </when>
+                                    <when test="criterion.betweenValue">
+                                        AND ${criterion.condition} #{criterion.value} AND #{criterion.secondValue}
+                                    </when>
+                                    <when test="criterion.listValue">
+                                        AND ${criterion.condition}
+                                        <foreach collection="criterion.value" item="listItem"
+                                            open="(" close=")" separator=",">
+                                            #{listItem}
+                                        </foreach>
+                                    </when>
+                                </choose>
+                            </foreach>
+                        </trim>
+                    </if>
+                </foreach>
+            </where>
+        </if>
+    </sql>
+    <resultMap id="Owner" type="com.goodneighbours.entity.Owner">
+        <id column="id" property="id" />
+        <result column="village_id" property="villageId" />
+        <result column="room_number" property="roomNumber" />
+        <result column="name" property="name" />
+        <result column="mobile" property="mobile" />
+        <result column="area" property="area" />
+        <result column="status" property="status" />
+        <result column="wx_id" property="wxId" />
+        <result column="wx_logo" property="wxLogo" />
+        <result column="wx_nick_name" property="wxNickName" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    <!-- 如果使用自定义主键，则使用如下被注释掉部分作为insert开始节点 -->
+    <!-- <insert id="insert" parameterType="java.lang.Object"> -->
+    <insert id="insert" parameterType="java.lang.Object" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO owner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            village_id,
+            room_number,
+            name,
+            mobile,
+            area,
+            status,
+            wx_id,
+            wx_logo,
+            wx_nick_name,
+            create_time,
+            update_time,
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{id},
+            #{villageId},
+            #{roomNumber},
+            #{name},
+            #{mobile},
+            #{area},
+            #{status},
+            #{wxId},
+            #{wxLogo},
+            #{wxNickName},
+            #{createTime},
+            #{updateTime},
+        </trim>
+    </insert>
+    <!-- 如果使用自定义主键，则使用如下被注释掉部分作为insertSelective开始节点 -->
+    <!-- <insert id="insertSelective" parameterType="java.lang.Object"> -->
+    <insert id="insertSelective" parameterType="java.lang.Object" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO owner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+            id,
+            </if>
+            <if test="villageId != null">
+            village_id,
+            </if>
+            <if test="roomNumber != null">
+            room_number,
+            </if>
+            <if test="name != null">
+            name,
+            </if>
+            <if test="mobile != null">
+            mobile,
+            </if>
+            <if test="area != null">
+            area,
+            </if>
+            <if test="status != null">
+            status,
+            </if>
+            <if test="wxId != null">
+            wx_id,
+            </if>
+            <if test="wxLogo != null">
+            wx_logo,
+            </if>
+            <if test="wxNickName != null">
+            wx_nick_name,
+            </if>
+            <if test="createTime != null">
+            create_time,
+            </if>
+            <if test="updateTime != null">
+            update_time,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="villageId != null">
+                #{villageId},
+            </if>
+            <if test="roomNumber != null">
+                #{roomNumber},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="mobile != null">
+                #{mobile},
+            </if>
+            <if test="area != null">
+                #{area},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="wxId != null">
+                #{wxId},
+            </if>
+            <if test="wxLogo != null">
+                #{wxLogo},
+            </if>
+            <if test="wxNickName != null">
+                #{wxNickName},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" >
+        INSERT INTO owner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            village_id,
+            room_number,
+            name,
+            mobile,
+            area,
+            status,
+            wx_id,
+            wx_logo,
+            wx_nick_name,
+            create_time,
+            update_time,
+        </trim>
+        VALUES
+       <foreach collection ="list" item="item" index= "index" separator =",">
+       <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.id},
+                #{item.villageId},
+                #{item.roomNumber},
+                #{item.name},
+                #{item.mobile},
+                #{item.area},
+                #{item.status},
+                #{item.wxId},
+                #{item.wxLogo},
+                #{item.wxNickName},
+                #{item.createTime},
+                #{item.updateTime},
+        </trim>
+        </foreach>
+
+        </insert>
+    <sql id="set">
+        <set>
+            id = #{target.id},
+            village_id = #{target.villageId},
+            room_number = #{target.roomNumber},
+            name = #{target.name},
+            mobile = #{target.mobile},
+            area = #{target.area},
+            status = #{target.status},
+            wx_id = #{target.wxId},
+            wx_logo = #{target.wxLogo},
+            wx_nick_name = #{target.wxNickName},
+            create_time = #{target.createTime},
+            update_time = #{target.updateTime},
+        </set>
+    </sql>
+    <sql id="selectiveSet">
+        <set>
+            <if test="target.id != null">
+            id = #{target.id},
+            </if>
+            <if test="target.villageId != null">
+            village_id = #{target.villageId},
+            </if>
+            <if test="target.roomNumber != null">
+            room_number = #{target.roomNumber},
+            </if>
+            <if test="target.name != null">
+            name = #{target.name},
+            </if>
+            <if test="target.mobile != null">
+            mobile = #{target.mobile},
+            </if>
+            <if test="target.area != null">
+            area = #{target.area},
+            </if>
+            <if test="target.status != null">
+            status = #{target.status},
+            </if>
+            <if test="target.wxId != null">
+            wx_id = #{target.wxId},
+            </if>
+            <if test="target.wxLogo != null">
+            wx_logo = #{target.wxLogo},
+            </if>
+            <if test="target.wxNickName != null">
+            wx_nick_name = #{target.wxNickName},
+            </if>
+            <if test="target.createTime != null">
+            create_time = #{target.createTime},
+            </if>
+            <if test="target.updateTime != null">
+            update_time = #{target.updateTime},
+            </if>
+        </set>
+    </sql>
+    <select id="countByCriteriaQuery" parameterType="com.goodneighbours.dao.common.query.CriteriaQuery"
+        resultType="java.lang.Long">
+        SELECT COUNT(*) FROM owner
+        <include refid="criteriaQueryWhere" />
+    </select>
+    <select id="selectByCriteriaQuery" resultMap="Owner"
+        parameterType="com.goodneighbours.dao.common.query.CriteriaQuery">
+        SELECT
+        <if test="distinct">
+            DISTINCT
+        </if>
+        'true' as QUERYID,
+        owner.*
+        FROM owner
+        <include refid="criteriaQueryWhere" />
+        <if test="sorts != null">
+            <trim prefix="ORDER BY ">
+            <foreach collection="sorts" item="sort" separator=",">
+                ${sort.field} ${sort.direction}
+            </foreach>
+            </trim>
+        </if>
+        <include refid="pager" />
+    </select>
+    <select id="selectById" resultMap="Owner" parameterType="java.lang.Integer">
+        SELECT
+        owner.*
+        FROM owner
+        WHERE id = #{_parameter}
+    </select>
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        DELETE FROM owner
+        WHERE id = #{_parameter}
+    </delete>
+    <delete id="deleteByCriteriaQuery" parameterType="com.goodneighbours.dao.common.model.param.DeleteByCriteriaQueryParam">
+        DELETE FROM owner
+        <include refid="criteriaQueryWhere" />
+    </delete>
+    <update id="updateByCriteriaQuerySelective" parameterType="com.goodneighbours.dao.common.model.param.DeleteByCriteriaQueryParam">
+        UPDATE owner
+        <include refid="selectiveSet" />
+        <include refid="criteriaQueryWhere" />
+    </update>
+    <update id="updateByCriteriaQuery" parameterType="com.goodneighbours.dao.common.model.param.UpdateByCriteriaQueryParam">
+        UPDATE owner
+        <include refid="set" />
+        <include refid="criteriaQueryWhere" />
+    </update>
+    <update id="updateByIdSelective" parameterType="com.goodneighbours.dao.common.model.param.UpdateByIdParam">
+        UPDATE owner
+        <include refid="selectiveSet" />
+        WHERE id = #{id}
+    </update>
+    <update id="updateById" parameterType="com.goodneighbours.dao.common.model.param.UpdateByIdParam">
+        UPDATE owner
+        <include refid="set" />
+        WHERE id = #{id}
+    </update>
+</mapper>
+

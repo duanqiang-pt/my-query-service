@@ -1,0 +1,37 @@
+package com.zhongsheng.component;
+
+/**
+ * 用于封装被排序的对象
+ * @author zhongsheng
+ * @date 2020年10月12日
+ * @version 1.0
+ */
+public class WillOrderByObj <T>{
+    
+    /*
+     * 排序的目标对象
+     */
+    private  T   target;
+    
+    /*
+     * 排序的详情数组
+     */
+    private OrderByDetail[]  orderByDetailArr;
+
+    public T getTarget() {
+        return target;
+    }
+
+    public void setTarget(T target) {
+        this.target = target;
+    }
+
+    public OrderByDetail[] getOrderByDetailArr() {
+        return orderByDetailArr;
+    }
+
+    public void setOrderByDetailArr(OrderByDetail[] orderByDetailArr) {
+        this.orderByDetailArr = orderByDetailArr;
+    }
+
+}

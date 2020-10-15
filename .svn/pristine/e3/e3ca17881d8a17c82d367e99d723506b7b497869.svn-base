@@ -1,0 +1,23 @@
+package com.zhongsheng.component;
+
+
+/**
+ * 相当于SQL中的order by子句的条件
+ * @version 1.0
+ */
+public class OrderBy {
+	
+	/*
+	 * 排序详情数组
+	 */
+	private OrderByDetail[] orderByDetailArr;
+
+    public OrderByDetail[] getOrderByDetailArr() {
+        return orderByDetailArr;
+    }
+
+    public void setOrderByDetailArr(OrderByDetail[] orderByDetailArr) {
+        this.orderByDetailArr = orderByDetailArr;
+    }
+	
+}

@@ -1,0 +1,170 @@
+package com.zhongsheng.template;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import com.zhongsheng.component.SqlQueryCondition;
+import com.zhongsheng.exception.SqlQueryException;
+import com.zhongsheng.result.QueryHandleResult;
+import com.zhongsheng.strategy.SqlGroupByStrategy;
+import com.zhongsheng.strategy.SqlLimitStrategy;
+import com.zhongsheng.strategy.SqlOrderByStrategy;
+import com.zhongsheng.strategy.SqlWhereStrategy;
+import com.zhongsheng.template.callback.AbstractQueryCallBack;
+import com.zhongsheng.utils.FileUitls;
+
+/**
+ * SQL查询的模板类
+ * 注意：
+ * 1、方法最好用泛型设计
+ * 2、
+ * @version 1.0
+ */
+public class SqlQueryTemplete<T> {
+    
+    
+    private static Properties strategyProperties = FileUitls.getHasDataProperties("/query-strategy-config.properties");
+    
+    /*
+     * where条件策略的key
+     */
+    private static final String WHERE_STRATEGY_KEY = "sql-where-strategy";
+    
+    /*
+     * group by条件策略的key
+     */
+    private static final String GROUP_BY_STRATEGY_KEY = "sql-group-by-strategy";
+    
+    /*
+     * order by条件策略的key
+     */
+    private static final String ORDER_BY_STRATEGY_KEY = "sql-order-by-strategy";
+    
+    /*
+     * limit条件策略的key
+     */
+    private static final String LIMIT_STRATEGY_KEY = "sql-limit-strategy";
+    
+    /*
+     * 存放条件策略的Map
+     */
+    private static Map<String, Object>  strategyMap = new HashMap<>();
+    
+    
+    //初始化各个条件的策略
+    static {
+        try {
+            strategyMap.put(WHERE_STRATEGY_KEY, Class.forName(strategyProperties.getProperty(WHERE_STRATEGY_KEY)).newInstance());
+            strategyMap.put(GROUP_BY_STRATEGY_KEY,Class.forName(strategyProperties.getProperty(GROUP_BY_STRATEGY_KEY)).newInstance());
+            strategyMap.put(ORDER_BY_STRATEGY_KEY,Class.forName(strategyProperties.getProperty(ORDER_BY_STRATEGY_KEY)).newInstance());
+            strategyMap.put(LIMIT_STRATEGY_KEY,Class.forName(strategyProperties.getProperty(LIMIT_STRATEGY_KEY)).newInstance());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    /**
+     * 查询的模板方法
+     * @param willHandleData       某张表的全量数据
+     * @param queryCallback     查询回调
+     * @param queryCondition    筛选条件
+     * @return  查询结果
+     */
+    public static <R> QueryHandleResult<R> doQueryProcess(List<R> willHandleData,
+                                                    AbstractQueryCallBack<R> queryCallback,SqlQueryCondition queryCondition){
+
+    	//初始化处理的返回结果
+    	QueryHandleResult<R>  result = new QueryHandleResult<>();
+    	
+       try {
+           //入参校验
+           queryCallback.checkParams();
+           
+           //执行where条件处理
+           List<R> whereSqlProcessResult = queryCallback.whereSqlProcess(
+                   willHandleData,queryCondition.getWhereObj(),(SqlWhereStrategy)strategyMap.get(WHERE_STRATEGY_KEY));
+         
+           result.setListResult(whereSqlProcessResult);
+           
+           //执行group by 条件处理
+           Map<Object, List<R>> groupBySqlProcessResult = queryCallback.groupBySqlProcess(
+                  whereSqlProcessResult,
+                  queryCondition.getGroupByObj(),(SqlGroupByStrategy)strategyMap.get(GROUP_BY_STRATEGY_KEY));
+           
+           result.setHasGroupByRessultMap(groupBySqlProcessResult);
+           
+           
+           //执行order by 条件处理
+           List<R> orderBySqlProcessResult = queryCallback.orderBySqlProcess(
+               whereSqlProcessResult,queryCondition.getOrderByObj(),
+                               (SqlOrderByStrategy)strategyMap.get(ORDER_BY_STRATEGY_KEY));
+           
+           result.setListResult(orderBySqlProcessResult);
+           
+           //执行limit条件处理
+           List<R> limitSqlProcessResult = queryCallback.limitSqlProcess(
+                       orderBySqlProcessResult,queryCondition.getLimitObj(),(SqlLimitStrategy)strategyMap.get(LIMIT_STRATEGY_KEY));
+           
+           result.setListResult(limitSqlProcessResult);
+           
+           //返回最后的处理结果
+           return result;
+           
+        } catch (SqlQueryException e) {
+           //如果是查询的业务异常就记录业务异常的日志并返回null
+           e.printStackTrace();
+           return result;
+       }catch (Exception e) {
+            //如果不是查询的业务异常就记录未知异常的日志并返回null
+            e.printStackTrace();
+            return result;
+        }finally{
+            //最后执行一下后置处理：例如记录业务摘要日志、记录处理时间、执行清理操作等
+            queryCallback.recordLogDataModel(null, willHandleData);
+            
+        }
+        
+    }
+    
+    
+  
+    
+    
+	
+	/**
+	 * 模板方法
+	* @return
+	 */
+	public static<T> List<T> query(){
+		//校验
+		
+		
+		return null;
+	}
+	
+	//1、校验
+	
+	/*
+	 * 2、缓存：入参为查询条件的五个入参，
+	 * 	key为取第一个数据的JSON和另外四个入参数据通过MD5或者其它手段生成一个唯一键之后的值，
+	 * 	value为这个查询的结果
+	 */
+	
+	/*
+	 * 3、where
+	 * （入参：刚才的Where对象，
+	 * 		用于筛选的结果集List<T>，策略接口：真正的实现逻辑放入这个策略接口的实现类中），
+	 * 出参：一个List<T>
+	 */
+	
+	
+	//4、goupBy：同where方法，入参为GroupBy对象，持有一个String的数组
+	
+	//5、orderBy：同where方法，入参为OrderBy对象，持有一个String的数组
+	
+	//6、limit：同where方法，入参为Limit对象，持有一个起始量和一个大小
+                                                                                                                                
+}

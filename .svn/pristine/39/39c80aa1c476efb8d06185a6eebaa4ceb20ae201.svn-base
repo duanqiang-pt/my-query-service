@@ -1,0 +1,11 @@
+package com.zhongsheng.strategy.impl;
+
+import com.zhongsheng.strategy.SqlLimitStrategy;
+
+/**
+ * limit条件默认策略类
+ * @version 1.0
+ */
+public class LimitDefaultStrategy implements SqlLimitStrategy {
+
+}

@@ -1,0 +1,52 @@
+package com.zhongsheng.component;
+
+
+import com.zhongsheng.component.where.Where;
+
+/**
+ * 相当于SQL的查询条件类包含了where、group by、order by和limit
+ * @version 1.0
+ */
+public class SqlQueryCondition {
+    
+    private Where whereObj;
+    
+    private GroupBy groupByObj;
+	
+    private OrderBy orderByObj;
+	
+    private Limit limitObj;
+
+    public Where getWhereObj() {
+        return whereObj;
+    }
+
+    public void setWhereObj(Where whereObj) {
+        this.whereObj = whereObj;
+    }
+
+    public GroupBy getGroupByObj() {
+        return groupByObj;
+    }
+
+    public void setGroupByObj(GroupBy groupByObj) {
+        this.groupByObj = groupByObj;
+    }
+
+    public OrderBy getOrderByObj() {
+        return orderByObj;
+    }
+
+    public void setOrderByObj(OrderBy orderByObj) {
+        this.orderByObj = orderByObj;
+    }
+
+    public Limit getLimitObj() {
+        return limitObj;
+    }
+
+    public void setLimitObj(Limit limitObj) {
+        this.limitObj = limitObj;
+    }
+
+}

@@ -1,0 +1,11 @@
+package com.zhongsheng.strategy;
+
+/**
+ * 关于limit功能的策略接口
+ * @version 1.0
+ */
+public interface SqlLimitStrategy {
+	
+	
+
+}

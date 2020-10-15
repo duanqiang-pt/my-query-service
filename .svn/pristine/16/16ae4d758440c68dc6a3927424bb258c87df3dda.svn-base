@@ -1,0 +1,32 @@
+package com.zhongsheng.checker;
+
+import com.zhongsheng.component.OrderBy;
+import com.zhongsheng.component.OrderByDetail;
+import com.zhongsheng.exception.QueryParamIllgalException;
+
+/**
+ *  关于OrderBy条件的检查者
+ * @version 1.0
+ */
+public class OrderByConditionChecker {
+    
+    /**
+     * 校验方法
+     * @param orderByCondition    对于order by条件需要校验的入参
+     */
+    public static void  checkWhereParams(OrderBy orderByCondition){
+        
+        //防止空指针，如果orderBy为null表示不需要排序直接返回
+        if(orderByCondition==null){
+            return;
+        }
+        
+        //获取到需要排序的详情数组
+        OrderByDetail[] orderByDetailArr = orderByCondition.getOrderByDetailArr();
+        if(orderByDetailArr==null || orderByDetailArr.length==0){
+            throw new QueryParamIllgalException("order by detail array is not empty !");
+        }
+        
+    }
+
+}

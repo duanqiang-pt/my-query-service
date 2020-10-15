@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Vendor: Pivotal Software, Inc.
+Implementation-Title: 05-springboot-myqueryservic
+Implementation-Version: 1.0.0
+Implementation-Vendor-Id: com.myself
+Build-Jdk: 1.7.0_65
+Built-By: Administrator
+Created-By: Maven Integration for Eclipse
+Implementation-URL: http://projects.spring.io/spring-boot/05-springboo
+ t-myqueryservic/
+

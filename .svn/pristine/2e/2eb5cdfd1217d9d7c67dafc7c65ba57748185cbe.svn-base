@@ -1,0 +1,57 @@
+package com.zhongsheng;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+import org.nustaq.serialization.FSTConfiguration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zhongsheng.model.UserDo;
+
+/**
+ * 对多种序列化方式的一个对比测试
+ * 注意：使用Jackson的序列化方式不支持泛型
+ * @version 1.0
+ */
+public class Application {
+
+	public static void main(String[] args) throws IOException {
+	    
+	    UserDo user = new UserDo();
+	    user.setId(5);
+	    user.setCellphone("13166666666");
+	    user.setAge(27);
+	    user.setName("Peter");
+	    
+	    
+	    FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+	    
+	    byte[] asByteArray = conf.asByteArray(user);
+	    
+	    System.out.println("使用FST序列化后的数组长度："+asByteArray.length);
+	    
+	    ByteArrayOutputStream bos=new ByteArrayOutputStream();
+        ObjectOutputStream oos=new ObjectOutputStream(bos);
+        
+        //写入对象
+        oos.writeObject(user);
+        
+        //获取字节数组
+        byte[] byteArray = bos.toByteArray();
+	    System.out.println("Java序列化后的数组长度："+byteArray.length);
+	    
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    
+	    byte[] writeValueAsBytes = objectMapper.writeValueAsBytes(user);
+	    
+	    
+	    System.out.println("使用Jackson序列化后的数组长度："+writeValueAsBytes.length);
+	    
+	    UserDo readValue = objectMapper.readValue(writeValueAsBytes, UserDo.class);
+	    
+	    System.out.println(readValue);
+	    
+	}
+
+}

@@ -1,0 +1,75 @@
+package com.zhongsheng.component.cache;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.zhongsheng.component.GroupBy;
+
+/**
+ * 用于缓存GroupBy条件的key
+ * @version 1.0
+ */
+public class GroupByCacheKey<T> implements Serializable{
+
+    private static final long serialVersionUID = -4577313390106306387L;
+    
+    private GroupBy groupByCondition;
+    
+    private List<T> handleData;
+
+    public GroupByCacheKey(GroupBy groupByCondition, List<T> handleData) {
+        this.groupByCondition = groupByCondition;
+        this.handleData = handleData;
+    }
+
+    public GroupBy getGroupByCondition() {
+        return groupByCondition;
+    }
+
+    public void setGroupByCondition(GroupBy groupByCondition) {
+        this.groupByCondition = groupByCondition;
+    }
+
+    public List<T> getHandleData() {
+        return handleData;
+    }
+
+    public void setHandleData(List<T> handleData) {
+        this.handleData = handleData;
+    }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((groupByCondition == null) ? 0 : groupByCondition.hashCode());
+		result = prime * result + ((handleData == null) ? 0 : handleData.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GroupByCacheKey<?> other = (GroupByCacheKey<?>) obj;
+		if (groupByCondition == null) {
+			if (other.groupByCondition != null)
+				return false;
+		} else if (!groupByCondition.equals(other.groupByCondition))
+			return false;
+		if (handleData == null) {
+			if (other.handleData != null)
+				return false;
+		} else if (!handleData.equals(other.handleData))
+			return false;
+		return true;
+	}
+    
+    
+    
+    
+}
